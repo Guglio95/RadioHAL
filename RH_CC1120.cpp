@@ -20,6 +20,7 @@
 //
 
 #include <RH_CC1120.h>
+#include <ArduinoLog.h>
 
 // Interrupt vectors for the 3 Arduino interrupt pins
 // Each interrupt can be handled by a different instance of RH_CC1120, allowing
@@ -943,12 +944,14 @@ void RH_CC1120::setPreambleLength(PreambleLen preambleLenIndex) {
 }
 
 bool RH_CC1120::setTxPower(TransmitPower powerIndex) {
-  setTxPower((uint32_t)powerIndex);
+    return setTxPower((uint32_t)powerIndex);
 }
 
 bool RH_CC1120::setTxPower(uint32_t powerIndex) {
-  if (powerIndex > sizeof(paPowerValues) || powerIndex < 0)
-    return false;
+  if (powerIndex > sizeof(paPowerValues) || powerIndex < 0) {
+      Log.error("⚠ powerIndex out of bounds");
+      return false;
+  }
 
   spiWriteRegister(RH_CC1120_REG_002B_PA_CFG2, paPowerValues[powerIndex]);
 
@@ -957,7 +960,10 @@ bool RH_CC1120::setTxPower(uint32_t powerIndex) {
 
 // frequency calculation on the CC1120 is way too complicated: just use SmartRF
 // and set registers
-bool RH_CC1120::setFrequency(float centre) { return false; }
+bool RH_CC1120::setFrequency(float centre) {
+    Log.fatal("⚠ Not implemented");
+    return false;
+}
 
 void RH_CC1120::setDefaultRegisters() {
   // must-set registers (values suggested by SmartRF 2.8.0)
@@ -1006,6 +1012,7 @@ void RH_CC1120::setDefaultRegisters() {
   spiWriteRegister(RH_CC1120_REG_002E_PKT_LEN, 0xFF);  // max = 256 bytes enforced by the CC1120
 }
 
+
 // Sets registers from a canned modem configuration structure
 void RH_CC1120::setModemRegisters(const ModemConfig *config) {
   // modem configuration
@@ -1025,8 +1032,10 @@ void RH_CC1120::setModemRegisters(const ModemConfig *config) {
 // Set one of the canned Modem configs
 // Returns true if its a valid choice
 bool RH_CC1120::setModemConfig(ModemConfigChoice index) {
-  if (index > (signed int)(sizeof(MODEM_CONFIG_TABLE) / sizeof(ModemConfig)))
-    return false;
+  if (index > (signed int)(sizeof(MODEM_CONFIG_TABLE) / sizeof(ModemConfig))) {
+      Log.error("modemConfigChoiceIndex is out of bounds");
+      return false;
+  }
 
   const RH_CC1120::ModemConfig *p = MODEM_CONFIG_TABLE;
   RH_CC1120::ModemConfig cfg;
