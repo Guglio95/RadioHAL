@@ -96,7 +96,7 @@
 #define RH_CC1120_REG_002D_PA_CFG0            0x2D     //Power Amplifier Configuration Reg. 0
 #define RH_CC1120_REG_002E_PKT_LEN            0x2E     //Packet Length Configuration
 
-// Extended registers
+// Extended registers (with retention)
 #define RH_CC1120_REG_2F00_IF_MIX_CFG         0x2F00     //IF Mix Configuration
 #define RH_CC1120_REG_2F01_FREQOFF_CFG        0x2F01     //Frequency Offset Correction Configuration
 #define RH_CC1120_REG_2F02_TOC_CFG            0x2F02     //Timing Offset Correction Configuration
@@ -155,6 +155,8 @@
 #define RH_CC1120_REG_2F37_XOSC0              0x2F37     //Crystal Oscillator Configuration Reg. 0
 #define RH_CC1120_REG_2F38_ANALOG_SPARE       0x2F38     //Analog Spare
 #define RH_CC1120_REG_2F39_PA_CFG3            0x2F39     //Power Amplifier Configuration Reg. 3
+
+// Extended registers (without retention)
 #define RH_CC1120_REG_2F64_WOR_TIME1          0x2F64     //eWOR Timer Counter Value MSB
 #define RH_CC1120_REG_2F65_WOR_TIME0          0x2F65     //eWOR Timer Counter Value LSB
 #define RH_CC1120_REG_2F66_WOR_CAPTURE1       0x2F66     //eWOR Timer Capture Value MSB
@@ -398,20 +400,25 @@ public:
     ///
     /// Defines values for various configuration fields and registers to 
     /// achieve a desired modulation speed and frequency deviation.
-  typedef struct
-  {
-    uint8_t reg_000a; ///< RH_CC1120_REG_000A_DEVIATION_M
-    uint8_t reg_000b; ///< RH_CC1120_REG_000B_MODCFG_DEV_E
-    uint8_t reg_0011; ///< RH_CC1120_REG_0011_CHAN_BW
-    uint8_t reg_0013; ///< RH_CC1120_REG_0013_MDMCFG0
-    uint8_t reg_0014; ///< RH_CC1120_REG_0014_SYMBOL_RATE2
-    uint8_t reg_0015; ///< RH_CC1120_REG_0015_SYMBOL_RATE1
-    uint8_t reg_0016; ///< RH_CC1120_REG_0016_SYMBOL_RATE0
-    uint8_t reg_2f01; ///< RH_CC1120_REG_2F01_FREQOFF_CFG
-    uint8_t reg_2f0c; ///< RH_CC1120_REG_2F0C_FREQ2
-    uint8_t reg_2f0d; ///< RH_CC1120_REG_2F0D_FREQ1
-    uint8_t reg_2f0e; ///< RH_CC1120_REG_2F0E_FREQ0
-  } ModemConfig;
+    typedef struct
+    {
+        uint8_t reg_000a; ///< RH_CC1120_REG_000A_DEVIATION_M
+        uint8_t reg_000b; ///< RH_CC1120_REG_000B_MODCFG_DEV_E
+        uint8_t reg_0011; ///< RH_CC1120_REG_0011_CHAN_BW
+        uint8_t reg_0013; ///< RH_CC1120_REG_0013_MDMCFG0
+        uint8_t reg_0014; ///< RH_CC1120_REG_0014_SYMBOL_RATE2
+        uint8_t reg_0015; ///< RH_CC1120_REG_0015_SYMBOL_RATE1
+        uint8_t reg_0016; ///< RH_CC1120_REG_0016_SYMBOL_RATE0
+        uint8_t reg_0021; ///< RH_CC1120_REG_0021_FS_CFG
+        uint8_t reg_002b; ///< RH_CC1120_REG_002B_PA_CFG2
+        uint8_t reg_002c; ///< RH_CC1120_REG_002C_PA_CFG1
+        uint8_t reg_002d; ///< RH_CC1120_REG_002D_PA_CFG0
+        uint8_t reg_2f01; ///< RH_CC1120_REG_2F01_FREQOFF_CFG
+        uint8_t reg_2f0c; ///< RH_CC1120_REG_2F0C_FREQ2
+        uint8_t reg_2f0d; ///< RH_CC1120_REG_2F0D_FREQ1
+        uint8_t reg_2f0e; ///< RH_CC1120_REG_2F0E_FREQ0
+    } ModemConfig;
+
 
     /// Choices for setModemConfig() for a selected subset of common modulation types,
     /// and data rates. If you need another configuration, use the register calculator.
@@ -419,28 +426,30 @@ public:
     /// These are indexes into MODEM_CONFIG_TABLE. We strongly recommend you use these symbolic
     /// definitions and not their integer equivalents: its possible that new values will be
     /// introduced in later versions (though we will try to avoid it).
-  typedef enum
-  {
-    f868MHz_2_FSKd3_9Bw10_0Dr1_2_15dBm_WhitOff_ManchOff = 0,
-    f868MHz_2_FSKd3_9Bw25_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f169MHz_2_FSKd3_9Bw25_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f868MHz_ASK_OOKd17_9Bw66_6Dr4_8_12_5dBm_WhitOff_ManchOff,
-    f950MHz_4_GFSKd82_7Bw200_0Dr100_15dBm_WhitOff_ManchOff,
-    f434MHz_2_FSKd3_9Bw10_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f950MHz_2_FSKd3_9Bw25_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f434MHz_2_FSKd20_0Bw50_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f950MHz_2_GFSKd24_9Bw100_0Dr50_15dBm_WhitOff_ManchOff,
-    f434MHz_2_FSKd3_9Bw25_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f950MHz_2_FSKd3_9Bw10_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f868MHz_4_GFSKd82_7Bw200_0Dr100_15dBm_WhitOff_ManchOff,
-    f434MHz_2_GFSKd24_9Bw100_0Dr50_15dBm_WhitOff_ManchOff,
-    f950MHz_2_FSKd20_0Bw50_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f868MHz_2_FSKd20_0Bw50_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f169MHz_2_FSKd20_0Bw50_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f868MHz_2_GFSKd20_0Bw100_0Dr38_4_15dBm_WhitOff_ManchOff,
-    f169MHz_2_FSKd3_9Bw10_0Dr1_2_15dBm_WhitOff_ManchOff,
-    f868MHz_2_GFSKd24_9Bw100_0Dr50_15dBm_WhitOff_ManchOff
-  } ModemConfigChoice;
+    typedef enum
+    {
+        RH_CC1120_Generic169_1 = 0,
+        RH_CC1120_Generic169_2,
+        RH_CC1120_Generic169_3,
+        RH_CC1120_Generic434_1,
+        RH_CC1120_Generic434_2,
+        RH_CC1120_Generic434_3,
+        RH_CC1120_Generic434_4,
+        RH_CC1120_Generic868_915_920Mhz_1,
+        RH_CC1120_Generic868_915_920Mhz_2,
+        RH_CC1120_Generic868_915_920Mhz_3,
+        RH_CC1120_Generic868_915_920Mhz_4,
+        RH_CC1120_Generic868_915_920Mhz_5,
+        RH_CC1120_Generic868_915_920Mhz_6,
+        RH_CC1120_Generic868_915_920Mhz_7,
+        RH_CC1120_Generic868_915_920Mhz_8,
+        RH_CC1120_Generic950Mhz_1,
+        RH_CC1120_Generic950Mhz_2,
+        RH_CC1120_Generic950Mhz_3,
+        RH_CC1120_Generic950Mhz_4,
+        RH_CC1120_Generic950Mhz_5
+    } ModemConfigChoice;
+
 
     /// Caution: these enum values are indexes into PaPowerValues. 
     /// Do not change one without changing the other. Use the symbolic names, not the integer values
